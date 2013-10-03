@@ -1,8 +1,8 @@
 #!/bin/bash
-#	This program downloads and extracts the latest version of LibreOffice
-#	in the folder where the program is located.
-#	Ce programme télécharge et extrait la dernière version de LibreOffice
-#	dans le dossier où le programme est situé.
+#	This script downloads the latest version of LibreOffice in the folder 
+#	where the script is located and extracts it to make a portable version.
+#	Ce script télécharge la dernière version de LibreOffice dans le dossier 
+#	où le script est situé et l'extrait pour en faire une version portable.
 #	
 #	Copyright 2013 Victor Grousset <victor@tuxayo.net>
 #	Copyright 2013 Alain Drillon <alaindrillon@myopera.com>
