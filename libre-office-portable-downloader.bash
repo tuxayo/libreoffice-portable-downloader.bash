@@ -21,10 +21,8 @@
 #	You should have received a copy of the GNU General Public License
 #	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-scriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-cd "$scriptDir"				#Go to the script directory
-
 function main() {
+	setCurrentDirectoryAndDisplayScriptVersion
 	version=$(getLatestLibreOfficeVersion)
 	url=$(getLinkLatestLibreOfficeRPM $version)
 	
@@ -34,13 +32,21 @@ function main() {
 	echo "Extracting from .tar.gz"
 	tar -xzf "libreOffice"$version".tar.gz" #&> /dev/null
 	extractRPM
-	echo "Extraction terminée"
+	echo "Extraction complete!"
 	cleaning
-	createShortcut
-	echo -e "Pour lancer LibreOffice, allez dans le dossier libreOffice"$version" et\nvous y trouverez le launcher"
-	echo "Version 1.0.0 by Victor Grousset (victor@tuxayo.net) under GPLv3 Licence"
+	createLauncher
+	echo -e "To launch LibreOffice, go to the libreOffice"$version" directory and you will find \nthe launcher."
+	echo -e "Pour lancer LibreOffice, allez dans le dossier libreOffice"$version" et vous y \ntrouverez le launcher"
+	echo "Version: "$scriptVersion", by Victor Grousset (victor@tuxayo.net) under GPLv3 Licence"
 	echo "With the help of Alain Drillon and Julien Papasian"
 	read	#press any key to continue
+}
+
+function setCurrentDirectoryAndDisplayScriptVersion() {
+	scriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+	cd "$scriptDir"			#Go to the script directory
+	scriptVersion="1.0.1"
+	echo "Script version: "$scriptVersion
 }
 
 function getLatestLibreOfficeVersion() {
@@ -126,8 +132,15 @@ function cleaning() {
 	rm "libreOffice"?"."?"."?".tar.gz"
 }
 
-function createShortcut() {
-	ln -s ./program/soffice ./libreOffice"$version"/"LibreOffice "$version" Launcher"
+function createLauncher() {
+	local launcher="./libreOffice"$version"/LibreOffice Launcher"
+	echo '#!/bin/bash' >> "$launcher"
+	#the 2 following lines make sure that the relative path used by
+	#the launcher will work if you launch it directory
+	echo 'scriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"' >>	"$launcher" 
+	echo 'cd "$scriptDir"' >> "$launcher"
+	echo './program/soffice' >> "$launcher"
+	chmod +x "$launcher"
 }
 
 main
