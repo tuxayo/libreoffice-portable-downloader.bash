@@ -4,7 +4,7 @@ This script downloads the latest version of LibreOffice in the folder where the 
 
 Ce script télécharge la dernière version de LibreOffice dans le dossier où le script est situé et l'extrait pour en faire une version portable.
 
-#Version: 1.0.2
+#Version: 1.1.0
 
 ###Typical use case
 You study computer science at the university and hopefully they have linux machines but only OpenOffice 3.2 or some other oldish version. With this script you can use the latest version of LibreOffice and benefit from the latest features, performances and interoperability improvements. 

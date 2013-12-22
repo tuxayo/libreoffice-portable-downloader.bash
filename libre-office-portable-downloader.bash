@@ -24,14 +24,14 @@
 function main() {
 	setCurrentDirectoryAndDisplayScriptVersion
 	version=$(getLatestLibreOfficeVersion)
-	url=$(getLinkLatestLibreOfficeRPM $version)
+	url=$(getLinkLatestLibreOfficeDEB $version)
 	
-	wget "$url" --no-check-certificate -O "libreOffice"$version".tar.gz"
+	#wget "$url" --no-check-certificate -O "libreOffice"$version".tar.gz"
 		#nocheck to avoid some https errors(for this, full https security 
 		#is not essential but you can remove the option is you want)
 	echo "Extracting from .tar.gz"
 	tar -xzf "libreOffice"$version".tar.gz" #&> /dev/null
-	extractRPM
+	extractDEB
 	echo "Extraction complete!"
 	cleaning
 	createLauncher
@@ -45,7 +45,7 @@ function main() {
 function setCurrentDirectoryAndDisplayScriptVersion() {
 	scriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 	cd "$scriptDir"			#Go to the script directory
-	scriptVersion="1.0.1"
+	scriptVersion="1.1.0"
 	echo "Script version: "$scriptVersion
 }
 
@@ -60,10 +60,10 @@ function getLatestLibreOfficeVersion() {
 	echo $lastVersionLibO
 }
 
-function getLinkLatestLibreOfficeRPM() {
+function getLinkLatestLibreOfficeDEB() {
 	lastVersionLibO=$1
 	getProcessorArchitecture
-	url="https://download.documentfoundation.org/libreoffice/stable/"$lastVersionLibO"/rpm/"$archFolderName"/LibreOffice_"$lastVersionLibO"_Linux_"$archInFileName"_rpm.tar.gz"
+	url="https://download.documentfoundation.org/libreoffice/stable/"$lastVersionLibO"/deb/"$archFolderName"/LibreOffice_"$lastVersionLibO"_Linux_"$archInFileName"_deb.tar.gz"
 	echo $url
 }
 
@@ -79,57 +79,22 @@ function getProcessorArchitecture() {
 	fi
 }
 
-function extractRPM() {
-	#first we go to the folder were the RPM files are
-	cd "LibreOffice_"?"."?"."?"."?"_Linux_"*"_rpm"/RPMS
-	echo "Extracting from .rpm"
-	formatOfRpm2cpioOutput=$(getFormatOfRpm2cpioOutput)
-	case $formatOfRpm2cpioOutput in
-		"gzip compressed data, from Unix")
-			extractGzipAndCpio
-			;;
-		"ASCII cpio archive (SVR4 with no CRC)")
-			extractCpio
-			;;
-		*)
-			echo $formatOfRpm2cpioOutput" n'est pas un format reconnu, veuillez m'envoyer le nom du format par email à victor@tuxayo.net si vous voulez aider à ce que ce script marche bien"
-			echo "On va faire avec la méthode d'extraction qui a le plus de chances de marcher ^^\""
-			echo $formatOfRpm2cpioOutput" is not a recognized format, please send me the format name by email to victor@tuxayo.net if you want this script to works well"
-			echo "We will try the extraction method which should works most of the time ^^\""
-			extractCpio
-			;;
-	esac
+function extractDEB() {
+	#first we go to the folder were the DEB files are
+	cd "LibreOffice_"?"."?"."?"."?"_Linux_"*"_deb"/DEBS
+	echo "Extracting from .deb"
+	
+	for b in *.deb; do  ## loop for all .DEB files found
+		ar p $b data.tar.gz | tar zx
+	done;
 	#now move LibreOffice folder to script folder
 	mv "opt/libreoffice"?"."* "$scriptDir""/libreOffice"$version
 	cd "$scriptDir"
 }
 
-function getFormatOfRpm2cpioOutput() {
-	#we check the format of one file to choose the good extraction method
-	firstRpmInFolder=$(ls *.rpm | head -1)
-	rpm2cpio $firstRpmInFolder> $firstRpmInFolder".cpio"
-	local formatOfRpm2cpioOutput=$(file -b $firstRpmInFolder".cpio")
-	rm $firstRpmInFolder".cpio"
-	echo $formatOfRpm2cpioOutput
-}
-
-function extractGzipAndCpio() {
-	for file in *.rpm
-	do 
-		rpm2cpio $file | gzip -d | cpio -idm
-	done
-}
-
-function extractCpio() {
-	for file in *.rpm
-	do
-		rpm2cpio $file | cpio -idm
-	done
-}
-
 function cleaning() {
-	rm -r "LibreOffice_"?"."?"."?"."?"_Linux_"*"_rpm"
-	rm "libreOffice"?"."?"."?".tar.gz"
+	rm -r "LibreOffice_"?"."?"."?"."?"_Linux_"*"_deb"
+	#rm "libreOffice"?"."?"."?".tar.gz"
 }
 
 function createLauncher() {
