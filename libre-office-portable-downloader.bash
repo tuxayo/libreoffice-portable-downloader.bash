@@ -26,7 +26,7 @@ function main() {
 	version=$(getLatestLibreOfficeVersion)
 	url=$(getLinkLatestLibreOfficeDEB $version)
 	
-	#wget "$url" --no-check-certificate -O "libreOffice"$version".tar.gz"
+	wget "$url" --no-check-certificate -O "libreOffice"$version".tar.gz"
 		#nocheck to avoid some https errors(for this, full https security 
 		#is not essential but you can remove the option is you want)
 	echo "Extracting from .tar.gz"
@@ -45,7 +45,7 @@ function main() {
 function setCurrentDirectoryAndDisplayScriptVersion() {
 	scriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 	cd "$scriptDir"			#Go to the script directory
-	scriptVersion="1.1.0"
+	scriptVersion="1.1.1"
 	echo "Script version: "$scriptVersion
 }
 
