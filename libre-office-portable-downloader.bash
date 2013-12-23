@@ -35,17 +35,17 @@ function main() {
 	echo "Extraction complete!"
 	cleaning
 	createLauncher
-	echo -e "To launch LibreOffice, go to the libreOffice"$version" directory and you will find \nthe launcher."
-	echo -e "Pour lancer LibreOffice, allez dans le dossier libreOffice"$version" et vous y \ntrouverez le launcher"
 	echo "Version: "$scriptVersion", by Victor Grousset (victor@tuxayo.net) under GPLv3 Licence"
 	echo "With the help of Alain Drillon and Julien Papasian"
-	read	#press any key to continue
+	echo -e "To launch LibreOffice, go to the libreOffice"$version" directory and you will find \nthe launcher."
+	echo "Press the enter key to continue"
+	read	#waits until enter pressed
 }
 
 function setCurrentDirectoryAndDisplayScriptVersion() {
 	scriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 	cd "$scriptDir"			#Go to the script directory
-	scriptVersion="1.1.1"
+	scriptVersion="1.1.2"
 	echo "Script version: "$scriptVersion
 }
 
@@ -94,14 +94,14 @@ function extractDEB() {
 
 function cleaning() {
 	rm -r "LibreOffice_"?"."?"."?"."?"_Linux_"*"_deb"
-	#rm "libreOffice"?"."?"."?".tar.gz"
+	rm "libreOffice"?"."?"."?".tar.gz"
 }
 
 function createLauncher() {
 	local launcher="./libreOffice"$version"/LibreOffice Launcher"
 	echo '#!/bin/bash' >> "$launcher"
 	#the 2 following lines make sure that the relative path used by
-	#the launcher will work if you launch it directory
+	#the launcher will work if you launch it from everywhere
 	echo 'scriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"' >>	"$launcher" 
 	echo 'cd "$scriptDir"' >> "$launcher"
 	echo './program/soffice' >> "$launcher"
